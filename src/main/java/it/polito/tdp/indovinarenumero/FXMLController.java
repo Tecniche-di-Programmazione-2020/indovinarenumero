@@ -43,6 +43,7 @@ public class FXMLController {
     	this.segreto=(int) (Math.random()*NMAX)+1;
     	this.tentativiFatti=0;
     	this.inGioco=true;
+    	btnProva.setDisable(false);
     	
     	//inizio una nuova partita - grafica
     	
@@ -59,12 +60,33 @@ public class FXMLController {
     	
     	//leggo input
     	String ts=txtTentativi.getText();
+    	txtTentativi.clear();
     	int tentativo=0;
-    	tentativo=Integer.parseInt(ts);
-    	this.tentativiFatti++;
+    	try{
+    		tentativo=Integer.parseInt(ts);
+    		tentativiFatti++;
+    		}catch(Exception e) {txtRisultato.appendText("Inserisci valore numerico\n");tentativiFatti--;}
+    	tentativiFatti++;
+    	Rimasti.clear();
+    	Rimasti.setText(Integer.toString(TMAX-tentativiFatti));
     	
+    	txtRisultato.appendText("Nuovo tentativo --> NUMERO: "+tentativo+" ");
     	
+    	if(tentativiFatti<=TMAX&&inGioco==true) {
     	
+    	if(tentativo==segreto) {txtRisultato.appendText("Valore esatto\n");inGioco=false;btnProva.setDisable(true);}
+    	if(tentativo>segreto)txtRisultato.appendText("Valore troppo alto\n");
+    	if(tentativo<segreto)txtRisultato.appendText("Valore troppo basso\n");
+    	}
+    	
+    	if(tentativiFatti==TMAX||inGioco==false) {
+    		inGioco=false;
+    		btnProva.setDisable(true);
+    		if(tentativo==segreto)txtRisultato.appendText("\n---Hai vinto---");
+    		else txtRisultato.appendText("\n---Hai perso---");
+    		
+    		
+    	}
     	
 
     }
