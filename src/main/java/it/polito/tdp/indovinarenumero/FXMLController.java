@@ -63,7 +63,7 @@ public class FXMLController {
     	tentativo=Integer.parseInt(ts);
     	this.tentativiFatti++;
     	
-    	if 
+    	
     	
     	
 
