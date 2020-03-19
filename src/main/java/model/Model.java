@@ -15,9 +15,6 @@ public class Model {
 	 * <li>estrae un numero
 	 * <li>azzera il numero di tentativi fatti
 	 * @param inGioco true
-	 * 
-	 * 
-	 * 
 	 */
 	public void nuovaPartita() {
 		segreto = (int) (Math.random() * NMAX) + 1;
