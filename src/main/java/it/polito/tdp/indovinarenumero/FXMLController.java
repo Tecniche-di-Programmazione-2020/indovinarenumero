@@ -6,8 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import model.Model;
 
 public class FXMLController {
@@ -24,9 +27,24 @@ public class FXMLController {
 
 	@FXML
 	private TextField Rimasti;
-	
+
 	@FXML
-    private ProgressBar progressBar;
+	private ProgressBar progressBar;
+
+	@FXML
+	private HBox radioLivello;
+
+	@FXML
+	private ToggleGroup livello;
+
+	@FXML
+	private RadioButton livello1;
+
+	@FXML
+	private RadioButton livello2;
+
+	@FXML
+	private RadioButton livello3;
 
 	@FXML
 	private TextField txtTentativi;
@@ -40,16 +58,34 @@ public class FXMLController {
 	@FXML
 	void doNuova(ActionEvent event) {
 
+		// acquisisco i parametri
+		int sceltaLivello = 0;
+
+		if (livello.getSelectedToggle().equals(livello1))
+			sceltaLivello = 1;
+		if (livello.getSelectedToggle().equals(livello2))
+			sceltaLivello = 2;
+		if (livello.getSelectedToggle().equals(livello3))
+			sceltaLivello = 3;
+
 		// inizio una nuova partita - logica
-		model.nuovaPartita();
+
+		String testo = model.nuovaPartita(sceltaLivello);
+		
+	
 
 		// inizio una nuova partita - grafica
 		btnProva.setDisable(false);
+		//radioLivello.setDisable(true);
+
 		txtRisultato.clear();
 		txtRisultato.appendText("Partita iniziata\n");
+		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
+		progressBar.setProgress((double) model.getTentativiResidui() / model.getTMAX());
+		
+		txtRisultato.appendText(testo);
+
 		txtRisultato.appendText("Numero estratto " + model.getSegreto() + "\n");
-		Rimasti.setText(Integer.toString(model.getTMAX()));
-		progressBar.setProgress((double)model.getTentativiResidui()/model.getTMAX());
 
 	}
 
@@ -72,13 +108,13 @@ public class FXMLController {
 
 		// Richiamo il metodo con la logica
 		txtRisultato.appendText(model.nuovoTentativo(tentativo) + "\n");
-		
+
 		// Gestisco la grafica
 		if (model.isInGioco() == false)
 			btnProva.setDisable(true);
 		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
-		progressBar.setProgress((double)model.getTentativiResidui()/model.getTMAX());
-		
+		progressBar.setProgress((double) model.getTentativiResidui() / model.getTMAX());
+
 	}
 
 	@FXML

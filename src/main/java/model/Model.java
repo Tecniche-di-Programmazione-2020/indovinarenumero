@@ -1,8 +1,8 @@
 package model;
 
 public class Model {
-	private final int NMAX = 100;
-	private final int TMAX = 8;
+	private int NMAX ;
+	private int TMAX ;
 	private int segreto;
 	private int tentativiFatti;
 	boolean inGioco = false;
@@ -16,10 +16,16 @@ public class Model {
 	 * <li>azzera il numero di tentativi fatti
 	 * @param inGioco true
 	 */
-	public void nuovaPartita() {
+	public String nuovaPartita(int sceltaLivello) {
+		String temp = null;
+		if(sceltaLivello==1) {NMAX=10;TMAX=4;temp="il livello scelto è facile\n";}
+		if(sceltaLivello==2) {NMAX=100;TMAX=7;temp="il livello scelto è medio\n";}
+		if(sceltaLivello==3) {NMAX=1000;TMAX=10;temp="il livello scelto è difficile\n";}
 		segreto = (int) (Math.random() * NMAX) + 1;
 		tentativiFatti = 0;
 		inGioco = true;
+		
+		return temp;
 	}
 	/**Il metodo verifica il tentativo fatto dall'utente
 	 * 
