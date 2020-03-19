@@ -6,14 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import model.Model;
 
 public class FXMLController {
+	private Model model;
 	
-	private final int NMAX=100;
-	private final int TMAX=8;
-	private int segreto;
-	private int tentativiFatti;
-	boolean inGioco=false;
 
     @FXML
     private ResourceBundle resources;
@@ -40,18 +37,15 @@ public class FXMLController {
     void doNuova(ActionEvent event) {
     	
     	//inizio una nuova partita - logica
-    	this.segreto=(int) (Math.random()*NMAX)+1;
-    	this.tentativiFatti=0;
-    	this.inGioco=true;
-    	btnProva.setDisable(false);
+    	model.nuovaPartita();
     	
     	//inizio una nuova partita - grafica
-    	
+    	btnProva.setDisable(false);
     	txtRisultato.clear();
     	txtRisultato.appendText("Partita iniziata\n");
-    	txtRisultato.appendText("Numero estratto "+this.segreto+"\n");
-    	txtTentativi.clear();
-    	Rimasti.setText(Integer.toString(TMAX));
+    	txtRisultato.appendText("Numero estratto "+model.getSegreto()+"\n");
+    	Rimasti.setText(Integer.toString(model.getTMAX()));
+    	
 
     }
 
@@ -59,34 +53,23 @@ public class FXMLController {
     void doTentativo(ActionEvent event) {
     	
     	//leggo input
+    	
     	String ts=txtTentativi.getText();
     	txtTentativi.clear();
     	int tentativo=0;
+    	//Provo la conversione ad intero
     	try{
     		tentativo=Integer.parseInt(ts);
-    		tentativiFatti++;
-    		}catch(Exception e) {txtRisultato.appendText("Inserisci valore numerico\n");tentativiFatti--;}
-    	tentativiFatti++;
-    	Rimasti.clear();
-    	Rimasti.setText(Integer.toString(TMAX-tentativiFatti));
-    	
-    	txtRisultato.appendText("Nuovo tentativo --> NUMERO: "+tentativo+" ");
-    	
-    	if(tentativiFatti<=TMAX&&inGioco==true) {
-    	
-    	if(tentativo==segreto) {txtRisultato.appendText("Valore esatto\n");inGioco=false;btnProva.setDisable(true);}
-    	if(tentativo>segreto)txtRisultato.appendText("Valore troppo alto\n");
-    	if(tentativo<segreto)txtRisultato.appendText("Valore troppo basso\n");
-    	}
-    	
-    	if(tentativiFatti==TMAX||inGioco==false) {
-    		inGioco=false;
-    		btnProva.setDisable(true);
-    		if(tentativo==segreto)txtRisultato.appendText("\n---Hai vinto---");
-    		else txtRisultato.appendText("\n---Hai perso---");
     		
-    		
-    	}
+    		}catch(Exception e) {txtRisultato.appendText("Inserisci valore numerico\n");return;}
+    	
+    	
+    	txtRisultato.appendText(model.nuovoTentativo(tentativo)+"\n");
+    	
+    	if(model.isInGioco()==false)btnProva.setDisable(true);
+    	
+    	//Rimasti.clear();
+    	Rimasti.setText(Integer.toString(model.getTentativiResidui()));
     	
 
     }
@@ -99,6 +82,9 @@ public class FXMLController {
         assert btnProva != null : "fx:id=\"btnProva\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtRisultato != null : "fx:id=\"txtRisultato\" was not injected: check your FXML file 'Scene.fxml'.";
 
+    }
+    public void setModel(Model model) {
+    	this.model=model;
     }
 }
 
