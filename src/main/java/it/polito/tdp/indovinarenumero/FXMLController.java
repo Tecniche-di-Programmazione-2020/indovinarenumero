@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import model.Model;
@@ -23,6 +24,9 @@ public class FXMLController {
 
 	@FXML
 	private TextField Rimasti;
+	
+	@FXML
+    private ProgressBar progressBar;
 
 	@FXML
 	private TextField txtTentativi;
@@ -45,6 +49,7 @@ public class FXMLController {
 		txtRisultato.appendText("Partita iniziata\n");
 		txtRisultato.appendText("Numero estratto " + model.getSegreto() + "\n");
 		Rimasti.setText(Integer.toString(model.getTMAX()));
+		progressBar.setProgress((double)model.getTentativiResidui()/model.getTMAX());
 
 	}
 
@@ -67,12 +72,13 @@ public class FXMLController {
 
 		// Richiamo il metodo con la logica
 		txtRisultato.appendText(model.nuovoTentativo(tentativo) + "\n");
-
+		
 		// Gestisco la grafica
 		if (model.isInGioco() == false)
 			btnProva.setDisable(true);
 		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
-
+		progressBar.setProgress((double)model.getTentativiResidui()/model.getTMAX());
+		
 	}
 
 	@FXML

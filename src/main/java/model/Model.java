@@ -34,13 +34,13 @@ public class Model {
 		if (tentativiFatti <= TMAX && inGioco == true) {
 
 			if (tentativo == segreto) {
-				temp += "Valore esatto\n";
+				temp += "Valore esatto";
 				inGioco = false;
 			}
 			if (tentativo > segreto)
-				temp += "Valore troppo alto\n";
+				temp += "Valore troppo alto";
 			if (tentativo < segreto)
-				temp += "Valore troppo basso\n";
+				temp += "Valore troppo basso";
 		}
 
 		if (tentativiFatti == TMAX || tentativo == segreto) {
@@ -69,7 +69,9 @@ public class Model {
 	}
 
 	public int getTentativiResidui() {
-		return TMAX - tentativiFatti;
+		int residui;
+		residui=TMAX - tentativiFatti;
+		return residui;
 	}
 
 	public boolean isInGioco() {
