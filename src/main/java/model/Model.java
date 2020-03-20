@@ -1,65 +1,69 @@
 package model;
 
+import java.util.LinkedList;
+
 public class Model {
 	private int NMAX ;
 	private int TMAX ;
 	private int segreto;
 	private int tentativiFatti;
 	boolean inGioco = false;
+	LinkedList<Integer>storico=new LinkedList<Integer>();
 
 	public Model() {
 		this.inGioco = false;
 		this.tentativiFatti = 0;
+		
 	}
-	/** il metodo nuovaPartita 
-	 * <li>estrae un numero
-	 * <li>azzera il numero di tentativi fatti
-	 * @param inGioco true
-	 */
-	public String nuovaPartita(int sceltaLivello) {
-		String temp = null;
-		if(sceltaLivello==1) {NMAX=10;TMAX=4;temp="il livello scelto è facile\n";}
-		if(sceltaLivello==2) {NMAX=100;TMAX=7;temp="il livello scelto è medio\n";}
-		if(sceltaLivello==3) {NMAX=1000;TMAX=10;temp="il livello scelto è difficile\n";}
-		segreto = (int) (Math.random() * NMAX) + 1;
+	
+	
+	public GameStatus nuovaPartita(GameStatus stato) {
+		this.storico.clear();
 		tentativiFatti = 0;
 		inGioco = true;
-		
-		return temp;
+		if(stato.getLivello()==1) {NMAX=10;TMAX=4;}
+		if(stato.getLivello()==2) {NMAX=100;TMAX=7;}
+		if(stato.getLivello()==3) {NMAX=1000;TMAX=10;}
+		segreto = (int) (Math.random() * NMAX) + 1;
+		stato.nuovoGiocoRX(inGioco, this.getTentativiResidui(), NMAX/2, NMAX/2);
+		return stato;
 	}
-	/**Il metodo verifica il tentativo fatto dall'utente
-	 * 
-	 * @param tentativo richiede il valore numerico inserito dall'utente
-	 * @return Una stringa per l'output
-	 */
-	public String nuovoTentativo(int tentativo) {
-		String temp = "Numero estratto "+this.getSegreto()+"\n";
+	
+	public GameStatus nuovoTentativo(GameStatus stato) {
+		int esitoTentativo=-3;
+		if(storico.contains(stato.getTentativoFatto())) {esitoTentativo=(5);}
+		else {
 		tentativiFatti++;
-		temp = "Nuovo tentativo --> NUMERO: " + tentativo + " ";
+		
+		
+		storico.add(stato.getTentativoFatto());
+		
+		if(storico.contains(stato.getTentativoFatto())) {esitoTentativo=(5);}
 
 		if (tentativiFatti <= TMAX && inGioco == true) {
-
-			if (tentativo == segreto) {
-				temp += "Valore esatto";
+			
+			if (stato.getTentativoFatto() == segreto) {
+				esitoTentativo=(0);
 				inGioco = false;
 			}
-			if (tentativo > segreto)
-				temp += "Valore troppo alto";
-			if (tentativo < segreto)
-				temp += "Valore troppo basso";
+			if (stato.getTentativoFatto() > segreto)
+				esitoTentativo=(1);
+				
+			if (stato.getTentativoFatto() < segreto)
+				esitoTentativo=(-1);
+				
+		}
+		
+		if(esitoTentativo!=0) {
+		
+			
+			
 		}
 
-		if (tentativiFatti == TMAX || tentativo == segreto) {
-			inGioco = false;
-
-			if (tentativo == segreto)
-				temp += "\n---Hai vinto---";
-			else
-				temp += "\n---Hai perso---";
-
-		}
-
-		return temp;
+		if (tentativiFatti == TMAX ) inGioco = false;
+		}	
+		stato.risultatoTentativo(inGioco, getTentativiResidui(), esitoTentativo,0,0);
+		return stato;
 	}
 
 	public int getTMAX() {
@@ -84,4 +88,5 @@ public class Model {
 		return inGioco;
 	}
 
+	
 }

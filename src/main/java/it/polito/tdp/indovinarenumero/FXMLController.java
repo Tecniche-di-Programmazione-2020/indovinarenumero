@@ -11,9 +11,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import model.GameStatus;
 import model.Model;
 
 public class FXMLController {
+	GameStatus stato= new GameStatus();
 	private Model model;
 
 	@FXML
@@ -47,6 +49,27 @@ public class FXMLController {
 	private RadioButton livello3;
 
 	@FXML
+	private RadioButton radioAutonomo;
+
+	@FXML
+	private ToggleGroup modalita;
+
+	@FXML
+	private RadioButton radioAssistito;
+	
+	@FXML
+    private HBox assistenza;
+
+	@FXML
+	private TextField suggerimento1;
+
+	@FXML
+	private TextField suggerimento2;
+
+	@FXML
+    private HBox hboxinserimenti;
+	
+	@FXML
 	private TextField txtTentativi;
 
 	@FXML
@@ -57,65 +80,68 @@ public class FXMLController {
 
 	@FXML
 	void doNuova(ActionEvent event) {
-
+		//GameStatus stato= new GameStatus();
 		// acquisisco i parametri
 		int sceltaLivello = 0;
-
-		if (livello.getSelectedToggle().equals(livello1))
-			sceltaLivello = 1;
-		if (livello.getSelectedToggle().equals(livello2))
-			sceltaLivello = 2;
-		if (livello.getSelectedToggle().equals(livello3))
-			sceltaLivello = 3;
-
-		// inizio una nuova partita - logica
-
-		String testo = model.nuovaPartita(sceltaLivello);
+		if (livello.getSelectedToggle().equals(livello1))			sceltaLivello = 1;
+		if (livello.getSelectedToggle().equals(livello2))			sceltaLivello = 2;
+		if (livello.getSelectedToggle().equals(livello3))			sceltaLivello = 3;
+		int sceltaModalita=0;
+		if(modalita.getSelectedToggle().equals(radioAutonomo))		sceltaModalita=1;
+		if(modalita.getSelectedToggle().equals(radioAssistito))		sceltaModalita=2;
 		
-	
+		// inizio una nuova partita - logica
+		stato.nuovoGiocoTX(sceltaLivello, sceltaModalita);
+		stato = model.nuovaPartita(stato);
 
 		// inizio una nuova partita - grafica
-		btnProva.setDisable(false);
-		//radioLivello.setDisable(true);
-
-		txtRisultato.clear();
-		txtRisultato.appendText("Partita iniziata\n");
-		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
-		progressBar.setProgress((double) model.getTentativiResidui() / model.getTMAX());
-		
-		txtRisultato.appendText(testo);
-
-		txtRisultato.appendText("Numero estratto " + model.getSegreto() + "\n");
+		this.aggiornaGrafica(stato);
 
 	}
 
 	@FXML
 	void doTentativo(ActionEvent event) {
-
+		int tentativo = 0;
 		// leggo input
 
 		String ts = txtTentativi.getText();
 		txtTentativi.clear();
-		int tentativo = 0;
+		
+		
 		// Provo la conversione ad intero
 		try {
 			tentativo = Integer.parseInt(ts);
-
+			
 		} catch (Exception e) {
 			txtRisultato.appendText("Inserisci valore numerico\n");
 			return;
 		}
-
+		
+		
+		
 		// Richiamo il metodo con la logica
-		txtRisultato.appendText(model.nuovoTentativo(tentativo) + "\n");
-
+		stato.inviaTentativo(tentativo);
+		stato=model.nuovoTentativo(stato);
+		txtRisultato.appendText("Nuovo tentativo --> NUMERO: " + stato.getTentativoFatto() + " ");
+		switch(stato.getEsitoTentativo()) {
+		case 0: txtRisultato.appendText("Valore esatto\n"); break;
+		case 1: txtRisultato.appendText("Valore troppo alto\n"); break;
+		case -1: txtRisultato.appendText("Valore troppo basso\n"); break;
+		case 5: txtRisultato.appendText("Valore gia inserito\n"); break;
+		default: txtRisultato.appendText("ERRORE SISTEMA\n");}
+		
 		// Gestisco la grafica
-		if (model.isInGioco() == false)
-			btnProva.setDisable(true);
-		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
-		progressBar.setProgress((double) model.getTentativiResidui() / model.getTMAX());
+		this.aggiornaGrafica(stato);
+		
+		}
+		
+		
 
-	}
+		
+			
+	
+
+	
 
 	@FXML
 	void initialize() {
@@ -130,4 +156,45 @@ public class FXMLController {
 	public void setModel(Model model) {
 		this.model = model;
 	}
+	
+	public void aggiornaGrafica(GameStatus stato) {
+		
+		progressBar.setProgress((double) stato.getTentativiResidui() / stato.getTentativiTotali());
+		Rimasti.setText(Integer.toString(model.getTentativiResidui()));
+		
+		if(stato.isInGioco()==true) {
+			hboxinserimenti.setDisable(false);
+			//btnProva.setDisable(false);
+			suggerimento1.setText(Integer.toString(stato.getSuggerimento1()));
+			suggerimento2.setText(Integer.toString(stato.getSuggerimento2()));
+			
+			
+			//solo all'avvio della partita
+			if(stato.getTentativoFatto()==-1) {
+				txtRisultato.clear();
+				txtRisultato.appendText("Partita iniziata\n");
+				//stampo il livello scelto
+				if(stato.getLivello()==1) {txtRisultato.appendText("il livello scelto è facile\n");}
+				if(stato.getLivello()==2) {txtRisultato.appendText("il livello scelto è medio\n");}
+				if(stato.getLivello()==3) {txtRisultato.appendText("il livello scelto è difficile\n");}
+				if(stato.getModalita()==1) {assistenza.setVisible(false);}
+				if(stato.getModalita()==2) {assistenza.setVisible(true);}
+				}
+			
+		}
+		if(stato.isInGioco()==false) {
+			hboxinserimenti.setDisable(true);
+			//btnProva.setDisable(true);
+			
+			
+			
+			if(stato.getEsitoTentativo()==0) {txtRisultato.appendText("\n---Hai vinto---");}
+			else txtRisultato.appendText("\n---Hai perso---");
+			}
+			
+		}
+		
+		
+		
+	
 }

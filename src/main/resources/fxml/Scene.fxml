@@ -15,9 +15,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polito.tdp.indovinarenumero.FXMLController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polito.tdp.indovinarenumero.FXMLController">
    <top>
-      <VBox alignment="TOP_CENTER" prefHeight="24.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <Label text="Indovina Numero">
                <opaqueInsets>
@@ -38,7 +38,7 @@
       </VBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
             <HBox>
                <children>
@@ -55,7 +55,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="Rimasti" editable="false" prefHeight="25.0" prefWidth="47.0" />
+                  <TextField fx:id="Rimasti" editable="false" prefColumnCount="2" prefHeight="25.0" prefWidth="47.0" />
                   <ProgressBar fx:id="progressBar" progress="0.0">
                      <HBox.margin>
                         <Insets left="20.0" />
@@ -92,7 +92,51 @@
                   <Insets left="20.0" right="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="63.0" prefWidth="549.0">
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label alignment="TOP_RIGHT" text="Modalità di gioco">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <RadioButton fx:id="radioAutonomo" mnemonicParsing="false" selected="true" text="Autonomo">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="modalita" />
+                     </toggleGroup>
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="radioAssistito" mnemonicParsing="false" text="Assistito" toggleGroup="$modalita">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <HBox fx:id="assistenza" alignment="CENTER_LEFT" visible="false">
+                     <children>
+                        <Label text="Inserisci un valore tra " />
+                        <TextField fx:id="suggerimento1" editable="false" prefColumnCount="4">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </TextField>
+                        <Label text="e">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="suggerimento2" editable="false" prefColumnCount="4" />
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="10.0" right="30.0" top="10.0" />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </HBox>
+            <HBox fx:id="hboxinserimenti" disable="true">
                <children>
                   <TextField fx:id="txtTentativi" promptText="Inserisci un numero">
                      <opaqueInsets>
@@ -114,7 +158,7 @@
                   <Insets bottom="10.0" />
                </padding>
             </HBox>
-            <TextArea fx:id="txtRisultato" editable="false" prefHeight="283.0" prefWidth="600.0" />
+            <TextArea fx:id="txtRisultato" editable="false" prefRowCount="20" />
          </children>
       </VBox>
    </center>
